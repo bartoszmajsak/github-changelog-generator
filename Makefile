@@ -4,7 +4,7 @@ PACKAGE_NAME:=github.com/bartoszmajsak/$(PROJECT_NAME)
 PROJECT_DIR:=$(shell pwd)
 BUILD_DIR:=$(PROJECT_DIR)/build
 BINARY_DIR:=$(PROJECT_DIR)/dist
-BINARY_NAME:=binary
+BINARY_NAME:=ghc
 
 # Call this function with $(call header,"Your message") to see underscored green text
 define header =
