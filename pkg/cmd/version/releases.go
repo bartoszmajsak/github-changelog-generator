@@ -3,7 +3,7 @@ package version
 import (
 	"net/http"
 
-	"github.com/bartoszmajsak/template-golang/version"
+	"github.com/bartoszmajsak/github-changelog-generator/version"
 
 	"github.com/google/go-github/github"
 	"golang.org/x/net/context"
@@ -15,7 +15,7 @@ func LatestRelease() (string, error) {
 
 	client := github.NewClient(&httpClient)
 	latestRelease, _, err := client.Repositories.
-		GetLatestRelease(context.Background(), "bartoszmajsak", "template-golang")
+		GetLatestRelease(context.Background(), "bartoszmajsak", "github-changelog-generator")
 	if err != nil {
 		return "", err
 	}

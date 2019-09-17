@@ -1,4 +1,4 @@
-PROJECT_NAME:=template-golang
+PROJECT_NAME:=github-changelog-generator
 PACKAGE_NAME:=github.com/bartoszmajsak/$(PROJECT_NAME)
 
 PROJECT_DIR:=$(shell pwd)

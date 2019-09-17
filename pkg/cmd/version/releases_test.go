@@ -3,8 +3,8 @@ package version_test
 import (
 	"gopkg.in/h2non/gock.v1"
 
-	"github.com/bartoszmajsak/template-golang/pkg/cmd/version"
-	v "github.com/bartoszmajsak/template-golang/version"
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/cmd/version"
+	v "github.com/bartoszmajsak/github-changelog-generator/version"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -14,7 +14,7 @@ var _ = Describe("Fetching latest release", func() {
 
 	BeforeEach(func() {
 		gock.New("https://api.github.com").
-			Get("/repos/bartoszmajsak/template-golang/releases/latest").
+			Get("/repos/bartoszmajsak/github-changelog-generator/releases/latest").
 			Reply(200).
 			File("fixtures/latest_release_is_v.0.0.2.json")
 	})

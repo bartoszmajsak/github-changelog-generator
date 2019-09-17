@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bartoszmajsak/template-golang/pkg/cmd/version"
-	"github.com/bartoszmajsak/template-golang/pkg/config"
-	"github.com/bartoszmajsak/template-golang/pkg/format"
-	v "github.com/bartoszmajsak/template-golang/version"
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/cmd/version"
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/config"
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/format"
+	v "github.com/bartoszmajsak/github-changelog-generator/version"
 
 	"github.com/spf13/cobra"
 )

@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   ## Regular build running unit tests and linters
   build:
-    working_directory: /go/src/github.com/bartoszmajsak/template-golang
+    working_directory: /go/src/github.com/bartoszmajsak/github-changelog-generator
     docker:
       - image: circleci/golang:1.12.9
     steps:

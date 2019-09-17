@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/bartoszmajsak/template-golang/version"
+	"github.com/bartoszmajsak/github-changelog-generator/version"
 
 	"github.com/spf13/cobra"
 )
