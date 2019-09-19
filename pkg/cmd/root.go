@@ -59,7 +59,7 @@ func NewCmd() *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().
-		StringVarP(&configFile, "config", "c", ".ike.config.yaml",
+		StringVarP(&configFile, "config", "c", ".ghc.config.yaml",
 			fmt.Sprintf("config file (supported formats: %s)", strings.Join(config.SupportedExtensions(), ", ")))
 	rootCmd.Flags().Bool("version", false, "prints the version number of ike cli")
 	rootCmd.PersistentFlags().String("help-format", "standard", "prints help in asciidoc table")

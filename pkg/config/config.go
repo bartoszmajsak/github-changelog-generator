@@ -29,7 +29,7 @@ import (
 // `IKE_DEVELOP_PORT`.
 func SetupConfigSources(configFile string, notDefault bool) error {
 	viper.Reset()
-	viper.SetEnvPrefix("BINARY_NAME")
+	viper.SetEnvPrefix("GHC")
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.SetTypeByDefaultValue(true)
