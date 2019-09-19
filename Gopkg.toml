@@ -11,8 +11,8 @@
   version = "=v0.0.5"
 
 [[constraint]]
-  name = "github.com/google/go-github"
-  version = "=v28.1.1"
+  name = "github.com/shurcooL/githubv4"
+  revision = "4ba037080260cb26279c05337b38064b520a7f9e"
 
 # Workaround for https://github.com/golang/dep/issues/1799
 # Otherwise ginkgo/gomega won't be pulled in

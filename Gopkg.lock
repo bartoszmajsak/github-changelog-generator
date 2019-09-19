@@ -10,6 +10,14 @@
   version = "v1.4.7"
 
 [[projects]]
+  digest = "1:440a3032b9e2db5bbf14535c63caf0e886f13d4f1d128a4a4d9deb03f924aa0c"
+  name = "github.com/golang/protobuf"
+  packages = ["proto"]
+  pruneopts = "NT"
+  revision = "6c65a5562fc06764971b7c5d05c76c75e84bdbf7"
+  version = "v1.3.2"
+
+[[projects]]
   digest = "1:6e9d2128f23114e87a0ac87ce6fd3f51556adfc1a6247c0632fbf44a4c34f846"
   name = "github.com/google/go-github"
   packages = ["github"]
@@ -163,6 +171,26 @@
   version = "v1.4.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:d476ba4b13770e960d8e1b89d33ba00b3c028c80f4f33191b6f1766defc76b7e"
+  name = "github.com/shurcooL/githubv4"
+  packages = ["."]
+  pruneopts = "NT"
+  revision = "4ba037080260cb26279c05337b38064b520a7f9e"
+
+[[projects]]
+  branch = "master"
+  digest = "1:66c353135e5beb1693dd5c3c586a120fd2cab8e26afe666c285fb65a178981e5"
+  name = "github.com/shurcooL/graphql"
+  packages = [
+    ".",
+    "ident",
+    "internal/jsonutil",
+  ]
+  pruneopts = "NT"
+  revision = "d48a9a75455f6af30244670bc0c9d0e38e7392b5"
+
+[[projects]]
   digest = "1:49b6e0d199dc20969bf7c9d14647313e1dd1b102178fad4ca999d8a9584edfab"
   name = "github.com/spf13/afero"
   packages = [
@@ -246,12 +274,24 @@
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "html",
     "html/atom",
     "html/charset",
   ]
   pruneopts = "NT"
   revision = "c8589233b77dde5edd2205ba8a4fb5c9c2472556"
+
+[[projects]]
+  branch = "master"
+  digest = "1:39b3fcfdc10f07969cf1e9fcb901bbb600083fff9880739f4ea596b48656c5a1"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = "NT"
+  revision = "0f29369cfe4552d0e4bcddc57cc75f4d7e672a33"
 
 [[projects]]
   branch = "master"
@@ -291,6 +331,22 @@
   pruneopts = "NT"
   revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
   version = "v0.3.2"
+
+[[projects]]
+  digest = "1:8fce3e8b14f9730b47a13c70a1dc76057e8e4829975f66848625788141036694"
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch",
+  ]
+  pruneopts = "NT"
+  revision = "5f2a59506353b8d5ba8cbbcd9f3c1f41f1eaf079"
+  version = "v1.6.2"
 
 [[projects]]
   digest = "1:1b91ae0dc69a41d4c2ed23ea5cffb721ea63f5037ca4b81e6d6771fbb8f45129"
@@ -334,11 +390,13 @@
     "github.com/onsi/ginkgo",
     "github.com/onsi/ginkgo/reporters",
     "github.com/onsi/gomega",
+    "github.com/shurcooL/githubv4",
     "github.com/spf13/cobra",
     "github.com/spf13/pflag",
     "github.com/spf13/viper",
     "go.uber.org/goleak",
     "golang.org/x/net/context",
+    "golang.org/x/oauth2",
     "gopkg.in/h2non/gock.v1",
   ]
   solver-name = "gps-cdcl"
