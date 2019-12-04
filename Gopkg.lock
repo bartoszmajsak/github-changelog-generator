@@ -115,7 +115,7 @@
   version = "v1.1.2"
 
 [[projects]]
-  digest = "1:b19a2d6df8585d12467dd8058e49d103b0f86ed92709ec26d33cd31932e9dd9f"
+  digest = "1:3a47e496452035d322c70191b5971cebe92863a374203240c25cec808232afa7"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -138,11 +138,11 @@
     "types",
   ]
   pruneopts = "NT"
-  revision = "974566c482abc93ffd3df6f4626e79076c7ed290"
-  version = "v1.10.1"
+  revision = "ce5d301e555bb672c693c099ba6ca5087b06c0b4"
+  version = "v1.10.3"
 
 [[projects]]
-  digest = "1:2ea4049c70f105105777583d180b3ff3f27a970d07230882c45590793919ed3a"
+  digest = "1:1c76cf1c1ac89005595a3d74b02011462199b8de68ec618cd82e5534f50d4982"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -159,8 +159,8 @@
     "types",
   ]
   pruneopts = "NT"
-  revision = "bdebf9e0ece900259084cfa4121b97ce1a540939"
-  version = "v1.7.0"
+  revision = "f9a52764bd5a0fd2d201bcca584351d03b72f8da"
+  version = "v1.7.1"
 
 [[projects]]
   digest = "1:5e2ce9b90fcb9747d5ead0fefec4221c898ee7e2f6516ad7590bd999c808b834"
@@ -171,7 +171,6 @@
   version = "v1.4.0"
 
 [[projects]]
-  branch = "master"
   digest = "1:d476ba4b13770e960d8e1b89d33ba00b3c028c80f4f33191b6f1766defc76b7e"
   name = "github.com/shurcooL/githubv4"
   packages = ["."]
@@ -234,12 +233,20 @@
   version = "v1.0.3"
 
 [[projects]]
-  digest = "1:8a2c8828a6fc03841448c29c80eeb6c6f2e2b22c2ddcb93d125bf7dac56c136b"
+  digest = "1:560e5bf3bb606684b7368ca532228fad4ceb1982e79f790483557db31d666e02"
   name = "github.com/spf13/viper"
   packages = ["."]
   pruneopts = "NT"
-  revision = "b5bf975e5823809fb22c7644d008757f78a4259e"
-  version = "v1.4.0"
+  revision = "72b022eb357a56469725dcd03918449e2278d02e"
+  version = "v1.5.0"
+
+[[projects]]
+  digest = "1:f60e4a8af6b6f3940cbdd28b1262221d28b4eb4d31b87bdb7b219f5fc0f278bf"
+  name = "github.com/subosito/gotenv"
+  packages = ["."]
+  pruneopts = "NT"
+  revision = "2ef7124db659d49edac6aa459693a15ae36c671a"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
