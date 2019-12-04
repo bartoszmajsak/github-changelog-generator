@@ -16,8 +16,7 @@ func CreateClient() *githubv4.Client {
 		&oauth2.Token{AccessToken: os.Getenv("GHC_GITHUB_TOKEN")},
 	)
 	httpClient := oauth2.NewClient(context.Background(), src)
-	gh := githubv4.NewClient(httpClient)
-	return gh
+	return githubv4.NewClient(httpClient)
 }
 
 type AssociatedPRsQuery struct {
@@ -109,6 +108,5 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 			}
 		}
 	}
-	prs = removeDuplicates(prs)
-	return prs
+	return removeDuplicates(prs)
 }
