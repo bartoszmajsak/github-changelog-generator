@@ -57,7 +57,11 @@ func fetchRelatedPRs(repoName, ref string) map[string][]github.PullRequest {
 	prsByLabels := make(map[string][]github.PullRequest)
 	for i := range prs {
 		pr := prs[i]
-		prsByLabels[pr.Labels[0]] = append(prsByLabels[pr.Labels[0]], pr)
+		label := "misc"
+		if len(pr.Labels) > 0 {
+			label = pr.Labels[0]
+		}
+		prsByLabels[label] = append(prsByLabels[label], pr)
 	}
 
 	return prsByLabels
