@@ -1,20 +1,5 @@
-= Template Repository - Golang
+= GitHub Changelog Generator
 
-Basic structure for golang projects.
-
-Code:
-
-- Folder structure
-- Sample `dep` configurtion
-- Basic `Makefile`
-- `.editorconfig`
-- `.gitignore`
-
-Services:
-
-- CircleCI
-- GolangCI linter
-- Dependabot
+Generates changelog from commits.
 
 
-GitHub issues / pr templates (don't forget to customize the content!)
