@@ -12,9 +12,16 @@ import (
 )
 
 func CreateClient() *githubv4.Client {
-	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GHC_GITHUB_TOKEN")},
-	)
+	const ghToken = "GHC_GITHUB_TOKEN" //nolint[:gosec] G101: Potential hardcoded credential
+	var src oauth2.TokenSource
+	if token, exists := os.LookupEnv(ghToken); exists {
+		src = oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+	} else {
+		fmt.Printf(check.RedFmt, "Missing GitHub token.")
+		fmt.Println("Please set it using env variable " + ghToken +
+			", otherwise you might not be able to query the data due to rate limits.\n" +
+			"For more information on how to create one see https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line")
+	}
 	httpClient := oauth2.NewClient(context.Background(), src)
 	return githubv4.NewClient(httpClient)
 }
