@@ -1,9 +1,9 @@
-package version_test
+package github_test
 
 import (
 	"gopkg.in/h2non/gock.v1"
 
-	"github.com/bartoszmajsak/github-changelog-generator/pkg/cmd/version"
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/github"
 	v "github.com/bartoszmajsak/github-changelog-generator/version"
 
 	. "github.com/onsi/ginkgo"
@@ -25,7 +25,7 @@ var _ = Describe("Fetching latest release", func() {
 
 	It("should get latest release", func() {
 		// when
-		release, err := version.LatestRelease()
+		release, err := github.LatestRelease()
 
 		// then
 		Expect(err).ToNot(HaveOccurred())
@@ -34,11 +34,11 @@ var _ = Describe("Fetching latest release", func() {
 
 	It("should determine that v0.0.0 is not latest release", func() {
 		// given
-		latestRelease, err := version.LatestRelease()
+		latestRelease, err := github.LatestRelease()
 		Expect(err).ToNot(HaveOccurred())
 
 		// when
-		latest := version.IsLatestRelease(latestRelease)
+		latest := github.IsLatestRelease(latestRelease)
 
 		// then
 		Expect(latest).To(BeFalse())
@@ -47,11 +47,11 @@ var _ = Describe("Fetching latest release", func() {
 	It("should determine that v0.0.2 is latest release", func() {
 		// given
 		v.Version = "v0.0.2"
-		latestRelease, err := version.LatestRelease()
+		latestRelease, err := github.LatestRelease()
 		Expect(err).ToNot(HaveOccurred())
 
 		// when
-		latest := version.IsLatestRelease(latestRelease)
+		latest := github.IsLatestRelease(latestRelease)
 
 		// then
 		Expect(latest).To(BeTrue())

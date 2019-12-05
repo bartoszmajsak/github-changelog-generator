@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bartoszmajsak/github-changelog-generator/pkg/github"
+
 	"github.com/bartoszmajsak/github-changelog-generator/pkg/cmd/version"
 	"github.com/bartoszmajsak/github-changelog-generator/pkg/config"
 	"github.com/bartoszmajsak/github-changelog-generator/pkg/format"
@@ -22,8 +24,8 @@ func NewCmd() *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			if v.Released() {
 				go func() {
-					latestRelease, _ := version.LatestRelease()
-					if !version.IsLatestRelease(latestRelease) {
+					latestRelease, _ := github.LatestRelease()
+					if !github.IsLatestRelease(latestRelease) {
 						releaseInfo <- fmt.Sprintf("WARN: you are using %s which is not the latest release (newest is %s).\n"+
 							"Follow release notes for update info https://github.com/Maistra/istio-workspace/releases/latest", v.Version, latestRelease)
 					} else {

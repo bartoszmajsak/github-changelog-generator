@@ -1,4 +1,4 @@
-package version_test
+package github_test
 
 import (
 	"testing"

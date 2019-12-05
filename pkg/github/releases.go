@@ -1,4 +1,4 @@
-package version
+package github
 
 import (
 	"net/http"
