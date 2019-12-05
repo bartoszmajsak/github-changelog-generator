@@ -2,6 +2,7 @@ package generate
 
 import (
 	"os"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -24,6 +25,7 @@ func NewCmd() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			pullRequests := fetchRelatedPRs(repo, from)
+			sortDependencyPRs(pullRequests)
 			t, err := template.New("changelog").Parse(Default)
 			if err != nil {
 				return err
@@ -60,4 +62,11 @@ func fetchRelatedPRs(repoName, ref string) map[string][]github.PullRequest {
 	}
 
 	return prsByLabels
+}
+
+func sortDependencyPRs(prsByLabels map[string][]github.PullRequest) {
+	dependencies := prsByLabels["dependencies"]
+	sort.SliceStable(dependencies, func(i, j int) bool {
+		return strings.Compare(dependencies[i].Title, dependencies[j].Title) < 0
+	})
 }
