@@ -37,13 +37,12 @@ func NewCmd() *cobra.Command {
 		},
 	}
 
-	generateCmd.Flags().StringVarP(&tag, "tag", "t", "", "tag used for current release")
+	generateCmd.Flags().StringVarP(&tag, "tag", "t", "UNRELEASED", "tag used for current release")
 	generateCmd.Flags().StringVarP(&from, "from", "f", "", "from for which changelog should be generated")
 	generateCmd.Flags().StringVarP(&repo, "repository", "r", "", "repository URL")
 
-	_ = generateCmd.MarkFlagRequired("for")
-	_ = generateCmd.MarkFlagRequired("tag")
 	_ = generateCmd.MarkFlagRequired("repository")
+	_ = generateCmd.MarkFlagRequired("from")
 	return generateCmd
 }
 
