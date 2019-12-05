@@ -8,101 +8,113 @@ type Changelog struct {
 }
 
 const Default = `
-### New features
-
 {{- with $prs := (index .PullRequests "enhancement") -}}
+{{ if $prs }}
+### New features
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
-
-### Bug fixes
+{{ end }}
 
 {{- with $prs := (index .PullRequests "bug") -}}
+{{ if $prs }}
+### Bug fixes
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
-
-### Dependencies update
+{{ end }}
 
 {{- with $prs := (index .PullRequests "dependencies") -}}
+{{ if $prs }}
+### Dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}}))
 {{- end -}}
 {{ end }}
-
-### Project infrastructure
+{{ end }}
 
 {{- with $prs := (index .PullRequests "infra") -}}
+{{ if $prs }}
+### Project infrastructure
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
-
-### Testing
+{{ end }}
 
 {{- with $prs := (index .PullRequests "test-infra") -}}
+{{ if $prs }}
+### Testing
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
+{{ end }}
 
+{{- with $prs := (index .PullRequests "misc") -}}
+{{ if $prs }}
 ### Misc
-
-{{- with $prs := (index .PullRequests "uncategorized") -}}
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
+{{ end }}
 {{ end }}
 `
 
 const DefaultAdoc = `
-=== New features
-
 {{- with $prs := (index .PullRequests "enhancement") -}}
+{{ if $prs }}
+=== New features
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
 {{ end }}
-
-=== Bug fixes
+{{ end }}
 
 {{- with $prs := (index .PullRequests "bug") -}}
+{{ if $prs }}
+=== Bug fixes
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
 {{ end }}
-
-=== Dependencies update
+{{ end }}
 
 {{- with $prs := (index .PullRequests "dependencies") -}}
+{{ if $prs }}
+=== Dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}])
 {{- end -}}
 {{ end }}
-
-=== Project infrastructure
+{{ end }}
 
 {{- with $prs := (index .PullRequests "infra") -}}
+{{ if $prs }}
+=== Project infrastructure
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
 {{ end }}
-
-=== Testing
+{{ end }}
 
 {{- with $prs := (index .PullRequests "test-infra") -}}
+{{ if $prs }}
+=== Testing
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
 {{ end }}
+{{ end }}
 
+{{- with $prs := (index .PullRequests "misc") -}}
+{{ if $prs }}
 === Misc
-
-{{- with $prs := (index .PullRequests "uncategorized") -}}
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
+{{ end }}
 {{ end }}
 `

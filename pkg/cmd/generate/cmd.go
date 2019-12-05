@@ -17,6 +17,7 @@ func NewCmd() *cobra.Command {
 	var (
 		from,
 		repo,
+		format,
 		tag string
 	)
 	generateCmd := &cobra.Command{
@@ -26,7 +27,11 @@ func NewCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			pullRequests := fetchRelatedPRs(repo, from)
 			sortDependencyPRs(pullRequests)
-			t, err := template.New("changelog").Parse(Default)
+			tpl := Default
+			if cmd.Flag("format").Value.String() == "adoc" {
+				tpl = DefaultAdoc
+			}
+			t, err := template.New("changelog").Parse(tpl)
 			if err != nil {
 				return err
 			}
@@ -38,6 +43,7 @@ func NewCmd() *cobra.Command {
 	}
 
 	generateCmd.Flags().StringVarP(&tag, "tag", "t", "UNRELEASED", "tag used for current release")
+	generateCmd.Flags().StringVar(&format, "format", "md", "format of generated release notes")
 	generateCmd.Flags().StringVarP(&from, "from", "f", "", "from for which changelog should be generated")
 	generateCmd.Flags().StringVarP(&repo, "repository", "r", "", "repository URL")
 
