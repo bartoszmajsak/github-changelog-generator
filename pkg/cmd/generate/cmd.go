@@ -15,7 +15,6 @@ import (
 
 func NewCmd() *cobra.Command {
 	var (
-		from,
 		repo,
 		format,
 		tag string
@@ -25,7 +24,7 @@ func NewCmd() *cobra.Command {
 		Short:        "Generates changelog for a given from",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
-			pullRequests := fetchRelatedPRs(repo, from)
+			pullRequests := fetchPRsSinceLastRelease(repo)
 			sortDependencyPRs(pullRequests)
 			tpl := Default
 			if cmd.Flag("format").Value.String() == "adoc" {
@@ -44,20 +43,18 @@ func NewCmd() *cobra.Command {
 
 	generateCmd.Flags().StringVarP(&tag, "tag", "t", "UNRELEASED", "tag used for current release")
 	generateCmd.Flags().StringVar(&format, "format", "md", "format of generated release notes")
-	generateCmd.Flags().StringVarP(&from, "from", "f", "", "from for which changelog should be generated")
 	generateCmd.Flags().StringVarP(&repo, "repository", "r", "", "repository URL")
 
 	_ = generateCmd.MarkFlagRequired("repository")
-	_ = generateCmd.MarkFlagRequired("from")
 	return generateCmd
 }
 
-func fetchRelatedPRs(repoName, ref string) map[string][]github.PullRequest {
+func fetchPRsSinceLastRelease(repoName string) map[string][]github.PullRequest {
 	check.RepoFormat(repoName)
 	repo := strings.Split(repoName, "/")
 	client := github.CreateClient()
-
-	matchingCommit := github.FindMatchingCommit(client, repo, ref)
+	previousRelease, _ := github.LatestReleaseOf(repo[0], repo[1])
+	matchingCommit := github.FindMatchingCommit(client, repo, previousRelease)
 	prs := github.FindAssociatedPRs(client, repo, matchingCommit)
 
 	prsByLabels := make(map[string][]github.PullRequest)

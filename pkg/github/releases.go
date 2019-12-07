@@ -10,12 +10,16 @@ import (
 )
 
 func LatestRelease() (string, error) {
+	return LatestReleaseOf("bartoszmajsak", "github-changelog-generator")
+}
+
+func LatestReleaseOf(owner, repo string) (string, error) {
 	httpClient := http.Client{}
 	defer httpClient.CloseIdleConnections()
 
 	client := github.NewClient(&httpClient)
 	latestRelease, _, err := client.Repositories.
-		GetLatestRelease(context.Background(), "bartoszmajsak", "github-changelog-generator")
+		GetLatestRelease(context.Background(), owner, repo)
 	if err != nil {
 		return "", err
 	}
