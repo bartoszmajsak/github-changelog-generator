@@ -28,37 +28,39 @@ func CreateClient() *githubv4.Client {
 
 type AssociatedPRsQuery struct {
 	Repository struct {
-		Object struct {
-			Commit struct {
-				Oid     string
-				History struct {
-					Nodes []struct {
-						Oid             string
-						MessageHeadline string
-						Author          struct {
-							User struct {
-								Login string
-							}
-						}
-						AssociatedPullRequests struct {
-							Nodes []struct {
-								Title     string
-								Number    int
-								Permalink string
-								Author    struct {
+		DefaultBranch struct {
+			Target struct {
+				Commit struct {
+					Oid     string
+					History struct {
+						Nodes []struct {
+							Oid             string
+							MessageHeadline string
+							Author          struct {
+								User struct {
 									Login string
 								}
-								Labels struct {
-									Nodes []struct {
-										Name string
-									}
-								} `graphql:"labels(first: 8)"`
 							}
-						} `graphql:"associatedPullRequests(first: 4)"`
-					}
-				} `graphql:"history(since: $createdAt)"`
-			} `graphql:"... on Commit"`
-		} `graphql:"object(expression: \"master\")"`
+							AssociatedPullRequests struct {
+								Nodes []struct {
+									Title     string
+									Number    int
+									Permalink string
+									Author    struct {
+										Login string
+									}
+									Labels struct {
+										Nodes []struct {
+											Name string
+										}
+									} `graphql:"labels(first: 8)"`
+								}
+							} `graphql:"associatedPullRequests(first: 4)"`
+						}
+					} `graphql:"history(since: $createdAt)"`
+				} `graphql:"... on Commit"`
+			} `graphql:"target"`
+		} `graphql:"defaultBranchRef"`
 	} `graphql:"repository(owner: $owner, name: $name)"`
 }
 
@@ -94,7 +96,7 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 	check.IfError(err)
 
 	var prs []PullRequest
-	for _, node := range associatedPRs.Repository.Object.Commit.History.Nodes {
+	for _, node := range associatedPRs.Repository.DefaultBranch.Target.Commit.History.Nodes {
 		if node.Oid != matchingCommit.Repository.Object.Commit.Oid && node.MessageHeadline != "release: next iteration" {
 			for _, pr := range node.AssociatedPullRequests.Nodes {
 				if len(pr.Labels.Nodes) == 0 {
