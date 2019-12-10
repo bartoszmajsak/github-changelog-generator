@@ -28,7 +28,7 @@ const Default = `
 
 {{- with $prs := (index .PullRequests "dependencies") -}}
 {{ if $prs }}
-### Dependencies update
+### Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}}))
 {{- end -}}
@@ -84,7 +84,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (index .PullRequests "dependencies") -}}
 {{ if $prs }}
-=== Dependencies update
+=== Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}])
 {{- end -}}

@@ -25,7 +25,7 @@ func NewCmd() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			pullRequests := fetchPRsSinceLastRelease(repo)
-			sortDependencyPRs(pullRequests)
+			simplifyDepsPRs(pullRequests)
 			tpl := Default
 			if cmd.Flag("format").Value.String() == "adoc" {
 				tpl = DefaultAdoc
@@ -61,6 +61,9 @@ func fetchPRsSinceLastRelease(repoName string) map[string][]github.PullRequest {
 	for i := range prs {
 		pr := prs[i]
 		label := "misc"
+		if shouldSkipInChangelog(pr.Labels) {
+			continue
+		}
 		if len(pr.Labels) > 0 {
 			label = pr.Labels[0]
 		}
@@ -70,9 +73,46 @@ func fetchPRsSinceLastRelease(repoName string) map[string][]github.PullRequest {
 	return prsByLabels
 }
 
-func sortDependencyPRs(prsByLabels map[string][]github.PullRequest) {
+const skipLabel = "skip-changelog"
+
+func shouldSkipInChangelog(labels []string) bool {
+	for _, label := range labels {
+		if label == skipLabel {
+			return true
+		}
+	}
+	return false
+}
+
+const dependabotPrefix = "build(deps): bump "
+
+func simplifyDepsPRs(prsByLabels map[string][]github.PullRequest) {
 	dependencies := prsByLabels["dependencies"]
 	sort.SliceStable(dependencies, func(i, j int) bool {
 		return strings.Compare(dependencies[i].Title, dependencies[j].Title) < 0
 	})
+
+	latestDeps := make(map[string][]github.PullRequest)
+	for i := 0; i < len(dependencies); i++ {
+		prTitle := strings.Split(strings.TrimPrefix(dependencies[i].Title, dependabotPrefix), " ")
+		dep := prTitle[0]
+		version := prTitle[4]
+		dependencies[i].Title = dep + " to " + version
+		latestDeps[dep] = append(latestDeps[dep], dependencies[i])
+	}
+
+	latestPrs := make([]github.PullRequest, 0)
+	for key := range latestDeps {
+		key := key
+		sort.SliceStable(latestDeps[key], func(i, j int) bool {
+			return latestDeps[key][i].RelatedCommit.CreatedAt.After(latestDeps[key][j].RelatedCommit.CreatedAt.Time)
+		})
+		latestPrs = append(latestPrs, latestDeps[key][0])
+	}
+
+	sort.SliceStable(latestPrs, func(i, j int) bool {
+		return strings.Compare(latestPrs[i].Title, latestPrs[j].Title) < 0
+	})
+
+	prsByLabels["dependencies"] = latestPrs
 }
