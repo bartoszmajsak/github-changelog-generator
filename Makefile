@@ -91,14 +91,17 @@ $(BINARY_DIR)/$(BINARY_NAME): $(BINARY_DIR) $(SRCS)
 	${GOBUILD} go build -ldflags ${LDFLAGS} -o $@ ./cmd
 
 ##@ Setup
+.PHONY: install-dep
+install-dep:
+	go get -u github.com/golang/dep/cmd/dep
 
 .PHONY: tools
-tools: ## Installs required go tools
+tools: install-dep ## Installs required go tools
 	$(call header,"Installing required tools")
-	go get -u github.com/golang/dep/cmd/dep
-	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+	GO111MODULE=on go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.19.1
 	go get -u golang.org/x/tools/cmd/goimports
-	go get -u github.com/onsi/ginkgo/ginkgo
+	$(eval GINKGO_VERSION:=$(shell dep status -f='{{if eq .ProjectRoot "github.com/onsi/ginkgo"}}{{.Version}}{{end}}'))
+	GO111MODULE=on go get -u github.com/onsi/ginkgo/ginkgo@$(GINKGO_VERSION)
 
 EXECUTABLES:=dep golangci-lint goimports ginkgo
 CHECK:=$(foreach exec,$(EXECUTABLES),\
