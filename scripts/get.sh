@@ -11,6 +11,7 @@ die () {
 BINARY_NAME="ghc"
 TAR_FILE="/tmp/${BINARY_NAME}.tar.gz"
 RELEASES_URL="https://github.com/bartoszmajsak/github-changelog-generator/releases"
+path_only=false
 
 show_help() {
   echo "get - downloads ${BINARY_NAME} binary matching your operating system"
@@ -76,6 +77,10 @@ while test $# -gt 0; do
             dir=`echo $1 | sed -e 's/^[^=]*=//g'`
             shift
             ;;
+    --path-only)
+            path_only=true
+            shift
+            ;;
     *)
             die "Unknown param $1"
             break
@@ -92,5 +97,9 @@ test -z "$dir" &&  dir="$(mktemp -d --suffix=-${BINARY_NAME}-${version})"
 download ${version}
 tar -C "$dir" -xzf "$TAR_FILE" ${BINARY_NAME}
 
-echo "Downloaded ${BINARY_NAME} binary ($version) to $dir"
-echo "Make sure it's on your \$PATH."
+if ${path_only}; then
+  echo "$dir"
+else
+  echo "Downloaded ${BINARY_NAME} binary ($version) to $dir"
+  echo "Make sure it's on your \$PATH."
+fi
