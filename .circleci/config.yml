@@ -1,4 +1,5 @@
 defaults:
+  working_directory: &working_directory /go/src/github.com/bartoszmajsak/github-changelog-generator
   docker:
     - image: &golang-img circleci/golang:1.13.4
 
@@ -7,7 +8,7 @@ version: 2.1
 jobs:
   ## Regular build running unit tests and linters
   build:
-    working_directory: /go/src/github.com/bartoszmajsak/github-changelog-generator
+    working_directory: *working_directory
     docker:
       - image: *golang-img
     steps:
@@ -24,7 +25,7 @@ jobs:
             - ./vendor
 
   release:
-    working_directory: /go/src/github.com/bartoszmajsak/github-changelog-generator
+    working_directory: *working_directory
     docker:
       - image: *golang-img
     steps:
@@ -34,28 +35,24 @@ jobs:
           command: |
             curl -sL https://git.io/goreleaser | bash -s -- release --rm-dist
 
-  workflows:
-    version: 2.1
-    circleci_build:
-      jobs:
-        - build
-    circleci_e2e_tests:
-      jobs:
-        - e2e_tests_local
-        - e2e_tests_remote
-    circleci_release:
-      jobs:
-        - build:
-            filters:
-              tags:
-                only: /^v.*/
-              branches:
-                ignore: /.*/
-        - release:
-            requires:
-              - build
-            filters:
-              tags:
-                only: /^v.*/
-              branches:
-                ignore: /.*/
+workflows:
+  version: 2.1
+  circleci_build:
+    jobs:
+      - build
+  circleci_release:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
