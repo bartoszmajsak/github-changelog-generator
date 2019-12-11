@@ -1,3 +1,7 @@
+defaults:
+  docker:
+    - image: &golang-img circleci/golang:1.13.4
+
 version: 2.1
 
 jobs:
@@ -5,7 +9,7 @@ jobs:
   build:
     working_directory: /go/src/github.com/bartoszmajsak/github-changelog-generator
     docker:
-      - image: circleci/golang:1.13.4
+      - image: *golang-img
     steps:
       - checkout
       - restore_cache:
@@ -19,8 +23,39 @@ jobs:
           paths:
             - ./vendor
 
-workflows:
-  version: 2.1
-  circleci_build:
-    jobs:
-      - build
+  release:
+    working_directory: /go/src/github.com/bartoszmajsak/github-changelog-generator
+    docker:
+      - image: *golang-img
+    steps:
+      - checkout
+      - run:
+          name: "Release it!"
+          command: |
+            curl -sL https://git.io/goreleaser | bash -s -- release --rm-dist
+
+  workflows:
+    version: 2.1
+    circleci_build:
+      jobs:
+        - build
+    circleci_e2e_tests:
+      jobs:
+        - e2e_tests_local
+        - e2e_tests_remote
+    circleci_release:
+      jobs:
+        - build:
+            filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/
+        - release:
+            requires:
+              - build
+            filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/
