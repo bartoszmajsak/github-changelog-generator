@@ -6,6 +6,10 @@ BUILD_DIR:=$(PROJECT_DIR)/build
 BINARY_DIR:=$(PROJECT_DIR)/dist
 BINARY_NAME:=ghc
 
+# Determine this makefile's path.
+# Be sure to place this BEFORE `include` directives, if any.
+THIS_MAKEFILE:=$(lastword $(MAKEFILE_LIST))
+
 # Call this function with $(call header,"Your message") to see underscored green text
 define header =
 @echo -e "\n\e[92m\e[4m\e[1m$(1)\e[0m\n"
