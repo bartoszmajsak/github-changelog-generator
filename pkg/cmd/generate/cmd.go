@@ -25,16 +25,28 @@ func NewCmd() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			pullRequests := fetchPRsSinceLastRelease(repo)
-			simplifyDepsPRs(pullRequests)
+			dependencies, otherPRs := extractDepPRs(pullRequests)
+			dependencies = simplifyDepsPRs(dependencies)
 			tpl := Default
 			if cmd.Flag("format").Value.String() == "adoc" {
 				tpl = DefaultAdoc
 			}
-			t, err := template.New("changelog").Parse(tpl)
+			t, err := template.New("changelog").Funcs(map[string]interface{}{
+				"withLabel": func(prs []github.PullRequest, label string) []github.PullRequest {
+					prsWithLabel := make([]github.PullRequest, 0)
+					for i := range prs {
+						pr := &prs[i]
+						if Contains(pr.Labels, label) {
+							prsWithLabel = append(prsWithLabel, *pr)
+						}
+					}
+					return prsWithLabel
+				},
+			}).Parse(tpl)
 			if err != nil {
 				return err
 			}
-			if err := t.Execute(os.Stdout, &Changelog{Release: tag, PullRequests: pullRequests}); err != nil {
+			if err := t.Execute(os.Stdout, &Changelog{Release: tag, PullRequests: append(otherPRs, dependencies...)}); err != nil {
 				return err
 			}
 			return nil
@@ -49,7 +61,7 @@ func NewCmd() *cobra.Command {
 	return generateCmd
 }
 
-func fetchPRsSinceLastRelease(repoName string) map[string][]github.PullRequest {
+func fetchPRsSinceLastRelease(repoName string) []github.PullRequest {
 	check.RepoFormat(repoName)
 	repo := strings.Split(repoName, "/")
 	client := github.CreateClient()
@@ -57,20 +69,16 @@ func fetchPRsSinceLastRelease(repoName string) map[string][]github.PullRequest {
 	matchingCommit := github.FindMatchingCommit(client, repo, previousRelease)
 	prs := github.FindAssociatedPRs(client, repo, matchingCommit)
 
-	prsByLabels := make(map[string][]github.PullRequest)
+	filteredPRs := make([]github.PullRequest, 0)
 	for i := range prs {
 		pr := prs[i]
-		label := "misc"
 		if shouldSkipInChangelog(pr.Labels) {
 			continue
 		}
-		if len(pr.Labels) > 0 {
-			label = pr.Labels[0]
-		}
-		prsByLabels[label] = append(prsByLabels[label], pr)
+		filteredPRs = append(filteredPRs, pr)
 	}
 
-	return prsByLabels
+	return filteredPRs
 }
 
 const skipLabel = "skip-changelog"
@@ -86,8 +94,7 @@ func shouldSkipInChangelog(labels []string) bool {
 
 const dependabotPrefix = "build(deps): bump "
 
-func simplifyDepsPRs(prsByLabels map[string][]github.PullRequest) {
-	dependencies := prsByLabels["dependencies"]
+func simplifyDepsPRs(dependencies []github.PullRequest) []github.PullRequest {
 	sort.SliceStable(dependencies, func(i, j int) bool {
 		return strings.Compare(dependencies[i].Title, dependencies[j].Title) < 0
 	})
@@ -114,5 +121,19 @@ func simplifyDepsPRs(prsByLabels map[string][]github.PullRequest) {
 		return strings.Compare(latestPrs[i].Title, latestPrs[j].Title) < 0
 	})
 
-	prsByLabels["dependencies"] = latestPrs
+	return latestPrs
+}
+
+func extractDepPRs(prs []github.PullRequest) (depPRs, otherPRs []github.PullRequest) {
+	depPRs = make([]github.PullRequest, 0)
+	otherPRs = make([]github.PullRequest, 0)
+	for i := range prs {
+		pr := &prs[i]
+		if Contains(pr.Labels, "dependencies") {
+			depPRs = append(depPRs, prs[i])
+		} else {
+			otherPRs = append(otherPRs, prs[i])
+		}
+	}
+	return
 }

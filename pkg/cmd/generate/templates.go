@@ -4,11 +4,20 @@ import "github.com/bartoszmajsak/github-changelog-generator/pkg/github"
 
 type Changelog struct {
 	Release      string
-	PullRequests map[string][]github.PullRequest
+	PullRequests []github.PullRequest
+}
+
+func Contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
 
 const Default = `
-{{- with $prs := (index .PullRequests "enhancement") -}}
+{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
 {{ if $prs }}
 ### New features
 {{range $pr := $prs }}
@@ -17,7 +26,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "bug") -}}
+{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
 {{ if $prs }}
 ### Bug fixes
 {{range $pr := $prs }}
@@ -26,7 +35,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "dependencies") -}}
+{{- with $prs := (withLabel .PullRequests "dependencies") -}}
 {{ if $prs }}
 ### Latest dependencies update
 {{range $pr := $prs }}
@@ -35,7 +44,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "infra") -}}
+{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
 {{ if $prs }}
 ### Project infrastructure
 {{range $pr := $prs }}
@@ -44,18 +53,9 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "test-infra") -}}
+{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
 {{ if $prs }}
 ### Testing
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
-{{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (index .PullRequests "misc") -}}
-{{ if $prs }}
-### Misc
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
@@ -64,7 +64,7 @@ const Default = `
 `
 
 const DefaultAdoc = `
-{{- with $prs := (index .PullRequests "enhancement") -}}
+{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
 {{ if $prs }}
 === New features
 {{range $pr := $prs }}
@@ -73,7 +73,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "bug") -}}
+{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
 {{ if $prs }}
 === Bug fixes
 {{range $pr := $prs }}
@@ -82,7 +82,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "dependencies") -}}
+{{- with $prs := (withLabel .PullRequests "dependencies") -}}
 {{ if $prs }}
 === Latest dependencies update
 {{range $pr := $prs }}
@@ -91,7 +91,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "infra") -}}
+{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
 {{ if $prs }}
 === Project infrastructure
 {{range $pr := $prs }}
@@ -100,20 +100,11 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (index .PullRequests "test-infra") -}}
+{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
 {{ if $prs }}
 === Testing
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
-{{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (index .PullRequests "misc") -}}
-{{ if $prs }}
-=== Misc
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
 {{ end }}
