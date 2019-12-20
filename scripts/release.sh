@@ -86,7 +86,7 @@ done
 
 validate_version ${version}
 
- git tag -a "${version}" -m"Automatically created release tag"
+git tag -a "${version}" -m"Automatically created release tag"
 
 if ! ${dry_run}; then
   echo "Pushing changes to remote"
