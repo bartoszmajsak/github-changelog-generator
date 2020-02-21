@@ -1,7 +1,7 @@
 defaults:
   working_directory: &working_directory /go/src/github.com/bartoszmajsak/github-changelog-generator
   docker:
-    - image: &golang-img circleci/golang:1.13.5
+    - image: &golang-img circleci/golang:1.13.8
 
 version: 2.1
 
