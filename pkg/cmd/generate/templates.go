@@ -67,7 +67,7 @@ const Default = `
 const DefaultAdoc = `
 {{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
 {{ if $prs }}
-.All changes in this release
+.*All changes in this release*
 [%collapsible]
 ====
 *New features*
