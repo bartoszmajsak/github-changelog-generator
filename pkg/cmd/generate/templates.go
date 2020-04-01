@@ -66,7 +66,7 @@ const Default = `
 const DefaultAdoc = `
 {{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
 {{ if $prs }}
-=== New features
+==== New features
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
@@ -75,7 +75,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (withLabel .PullRequests "kind/bug") -}}
 {{ if $prs }}
-=== Bug fixes
+==== Bug fixes
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
@@ -84,7 +84,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (withLabel .PullRequests "dependencies") -}}
 {{ if $prs }}
-=== Latest dependencies update
+==== Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}])
 {{- end -}}
@@ -93,7 +93,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (withLabel .PullRequests "internal/infra") -}}
 {{ if $prs }}
-=== Project infrastructure
+==== Project infrastructure
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
@@ -102,7 +102,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
 {{ if $prs }}
-=== Testing
+==== Testing
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
