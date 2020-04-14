@@ -20,7 +20,7 @@ func NewCmd() *cobra.Command {
 	releaseInfo := make(chan string, 1)
 
 	rootCmd := &cobra.Command{
-		Use: "cmd",
+		Use: "ghc",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			if v.Released() {
 				go func() {
@@ -63,7 +63,7 @@ func NewCmd() *cobra.Command {
 	rootCmd.PersistentFlags().
 		StringVarP(&configFile, "config", "c", ".ghc.config.yaml",
 			fmt.Sprintf("config file (supported formats: %s)", strings.Join(config.SupportedExtensions(), ", ")))
-	rootCmd.Flags().Bool("version", false, "prints the version number of ike cli")
+	rootCmd.Flags().Bool("version", false, "prints the version number")
 	rootCmd.PersistentFlags().String("help-format", "standard", "prints help in asciidoc table")
 	if err := rootCmd.PersistentFlags().MarkHidden("help-format"); err != nil {
 		fmt.Printf("failed while trying to hide a flag: %s\n", err)
