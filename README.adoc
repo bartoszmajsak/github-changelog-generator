@@ -12,7 +12,7 @@ ghc generate --repository bartoszmajsak/github-changelog-generator
 Pull Requests will be grouped by labels defined for them. There are two special labels which are handled differently:
 
  * `skip-changelog` if present on the PR, it will not be included in the list
- * `dependencies`, if PR is titled `"build(deps): bump lib from X to Y"` will only include latest update in case of many since last release
+ * `dependencies`, if PR is titled `"build(deps): bump lib from X to Y"` will only include the latest update in case of many since last release
 
 
 == Installation
