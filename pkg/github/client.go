@@ -126,7 +126,10 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 	if unlabeledPRs {
 		_, _ = fmt.Fprint(os.Stderr, "#### Found unlabeled PRs\n\n")
 		for i := range withoutDuplicates {
-			_, _ = fmt.Fprintf(os.Stderr, "* %s\n", withoutDuplicates[i].Permalink)
+			pr := withoutDuplicates[i]
+			if len(pr.Labels) == 0 {
+				_, _ = fmt.Fprintf(os.Stderr, "* %s\n", pr.Permalink)
+			}
 		}
 	}
 	return withoutDuplicates
