@@ -2,6 +2,7 @@ package generate
 
 import (
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 	"text/template"
@@ -92,7 +93,7 @@ func shouldSkipInChangelog(labels []string) bool {
 	return false
 }
 
-const dependabotPrefix = "build(deps): bump "
+var dependabotPrefix = regexp.MustCompile(`^build\(deps\): [B|b]ump `)
 
 func simplifyDepsPRs(dependencies []github.PullRequest) []github.PullRequest {
 	sort.SliceStable(dependencies, func(i, j int) bool {
@@ -101,7 +102,8 @@ func simplifyDepsPRs(dependencies []github.PullRequest) []github.PullRequest {
 
 	latestDeps := make(map[string][]github.PullRequest)
 	for i := 0; i < len(dependencies); i++ {
-		prTitle := strings.Split(strings.TrimPrefix(dependencies[i].Title, dependabotPrefix), " ")
+		strippedPrefix := dependabotPrefix.ReplaceAllString(dependencies[i].Title, "")
+		prTitle := strings.Split(strippedPrefix, " ")
 		dep := prTitle[0]
 		version := prTitle[4]
 		dependencies[i].Title = dep + " to " + version
