@@ -42,22 +42,6 @@
   version = "v2.0.1"
 
 [[projects]]
-  digest = "1:f0d9d74edbd40fdeada436d5ac9cb5197407899af3fef85ff0137077ffe8ae19"
-  name = "github.com/hashicorp/errwrap"
-  packages = ["."]
-  pruneopts = "NT"
-  revision = "8a6fb523712970c966eefc6b39ed2c5e74880354"
-  version = "v1.0.0"
-
-[[projects]]
-  digest = "1:2ed138049ab373f696db2081ca48f15c5abdf20893803612a284f2bdce2bf443"
-  name = "github.com/hashicorp/go-multierror"
-  packages = ["."]
-  pruneopts = "NT"
-  revision = "886a7fbe3eb1c874d46f623bfa70af45f425b3d1"
-  version = "v1.0.0"
-
-[[projects]]
   digest = "1:62ba88d64dabadbbad170cf6b0d3bfd1f50c36b1566583a28d99304eb08a9bd2"
   name = "github.com/hashicorp/hcl"
   packages = [
@@ -393,7 +377,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/google/go-github/github",
-    "github.com/hashicorp/go-multierror",
     "github.com/onsi/ginkgo",
     "github.com/onsi/ginkgo/reporters",
     "github.com/onsi/gomega",
