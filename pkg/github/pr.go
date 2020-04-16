@@ -8,7 +8,7 @@ func extractLabels(nodes []struct{ Name string }) []string {
 	return labels
 }
 
-func removeDuplicates(elements []PullRequest) []PullRequest {
+func withoutDuplicates(elements []PullRequest) []PullRequest {
 	found := map[int]bool{}
 	var result []PullRequest
 

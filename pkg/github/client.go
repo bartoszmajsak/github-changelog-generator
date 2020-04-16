@@ -96,16 +96,11 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 	})
 	check.IfError(err)
 
-	var (
-		prs          []PullRequest
-		unlabeledPRs bool
-	)
+	var prs []PullRequest
+
 	for _, node := range associatedPRs.Repository.DefaultBranch.Target.Commit.History.Nodes {
 		if node.Oid != matchingCommit.Repository.Object.Commit.Oid && node.MessageHeadline != "release: next iteration" {
 			for _, pr := range node.AssociatedPullRequests.Nodes {
-				if len(pr.Labels.Nodes) == 0 {
-					unlabeledPRs = true
-				}
 				prs = append(prs, PullRequest{
 					RelatedCommit: Commit{
 						Hash:            node.Oid,
@@ -122,15 +117,5 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 			}
 		}
 	}
-	withoutDuplicates := removeDuplicates(prs)
-	if unlabeledPRs {
-		_, _ = fmt.Fprint(os.Stderr, "#### Found unlabeled PRs\n\n")
-		for i := range withoutDuplicates {
-			pr := withoutDuplicates[i]
-			if len(pr.Labels) == 0 {
-				_, _ = fmt.Fprintf(os.Stderr, "* %s\n", pr.Permalink)
-			}
-		}
-	}
-	return withoutDuplicates
+	return withoutDuplicates(prs)
 }

@@ -1,11 +1,14 @@
 package generate
 
 import (
+	"fmt"
 	"os"
 	"regexp"
 	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/pkg/errors"
 
 	"github.com/bartoszmajsak/github-changelog-generator/pkg/github"
 
@@ -21,9 +24,10 @@ func NewCmd() *cobra.Command {
 		tag string
 	)
 	generateCmd := &cobra.Command{
-		Use:          "generate",
-		Short:        "Generates changelog for a given from",
-		SilenceUsage: true,
+		Use:           "generate",
+		Short:         "Generates changelog for a given from",
+		SilenceUsage:  true,
+		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint[:unparam]
 			pullRequests := fetchPRsSinceLastRelease(repo)
 			dependencies, otherPRs := extractDepPRs(pullRequests)
@@ -49,6 +53,23 @@ func NewCmd() *cobra.Command {
 			}
 			if err := t.Execute(os.Stdout, &Changelog{Release: tag, PullRequests: append(otherPRs, dependencies...)}); err != nil {
 				return err
+			}
+
+			unlabeledPRs := 0
+			for i := range pullRequests {
+				pr := pullRequests[i]
+
+				if len(pr.Labels) == 0 {
+					unlabeledPRs++
+					if unlabeledPRs == 1 {
+						_, _ = fmt.Fprint(os.Stderr, "#### Found unlabeled PRs\n\n")
+					}
+					_, _ = fmt.Fprintf(os.Stderr, "* %s\n", pr.Permalink)
+				}
+			}
+
+			if unlabeledPRs > 0 {
+				return errors.Errorf("found %d unlabeled PRs", unlabeledPRs)
 			}
 			return nil
 		},

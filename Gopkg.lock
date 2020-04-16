@@ -155,6 +155,14 @@
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:4047c378584616813d610c9f993bf90dd0d07aed8d94bd3bc299cd35ececdcba"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "NT"
+  revision = "614d223910a179a466c1767a985424175c39b465"
+  version = "v0.9.1"
+
+[[projects]]
   digest = "1:d476ba4b13770e960d8e1b89d33ba00b3c028c80f4f33191b6f1766defc76b7e"
   name = "github.com/shurcooL/githubv4"
   packages = ["."]
@@ -380,6 +388,7 @@
     "github.com/onsi/ginkgo",
     "github.com/onsi/ginkgo/reporters",
     "github.com/onsi/gomega",
+    "github.com/pkg/errors",
     "github.com/shurcooL/githubv4",
     "github.com/spf13/cobra",
     "github.com/spf13/pflag",
