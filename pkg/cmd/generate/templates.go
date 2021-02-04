@@ -24,10 +24,9 @@ func Contains(s []string, es ...string) bool {
 }
 
 const Default = `
-{{- with $changeLog := . -}}
 {{ range $areaName, $areaLabel := .Areas }}
 ### {{$areaName}}
-{{- with $prs := (withLabels $changeLog.PullRequests "kind/enhancement" $areaLabel) -}}
+{{- with $prs := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
 {{ if $prs }}
 #### New features
 {{range $pr := $prs }}
@@ -36,7 +35,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabels $changeLog.PullRequests "kind/bug" $areaLabel) -}}
+{{- with $prs := (withLabels $.PullRequests "kind/bug" $areaLabel) -}}
 {{ if $prs }}
 #### Bug fixes
 {{range $pr := $prs }}
@@ -45,9 +44,8 @@ const Default = `
 {{ end }}
 {{ end }}
 {{ end }}
-{{- end -}}
 
-{{- with $prs := (withLabel .PullRequests "dependencies") -}}
+{{- with $prs := (withLabels .PullRequests "dependencies") -}}
 {{ if $prs }}
 ### Latest dependencies update
 {{range $pr := $prs }}
@@ -56,7 +54,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
+{{- with $prs := (withLabels .PullRequests "internal/infra") -}}
 {{ if $prs }}
 ### Project infrastructure
 {{range $pr := $prs }}
@@ -65,7 +63,7 @@ const Default = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
+{{- with $prs := (withLabels .PullRequests "internal/test-infra") -}}
 {{ if $prs }}
 ### Testing
 {{range $pr := $prs }}
@@ -76,7 +74,9 @@ const Default = `
 `
 
 const DefaultAdoc = `
-{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
+{{ range $areaName, $areaLabel := .Areas }}
+=== {{$areaName}}
+{{- with $prs := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
 {{ if $prs }}
 ==== New features
 {{range $pr := $prs }}
@@ -85,7 +85,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
+{{- with $prs := (withLabels $.PullRequests "kind/bug" $areaLabel) -}}
 {{ if $prs }}
 ==== Bug fixes
 {{range $pr := $prs }}
@@ -93,8 +93,9 @@ const DefaultAdoc = `
 {{- end -}}
 {{ end }}
 {{ end }}
+{{ end }}
 
-{{- with $prs := (withLabel .PullRequests "dependencies") -}}
+{{- with $prs := (withLabels .PullRequests "dependencies") -}}
 {{ if $prs }}
 ==== Latest dependencies update
 {{range $pr := $prs }}
@@ -103,7 +104,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
+{{- with $prs := (withLabels .PullRequests "internal/infra") -}}
 {{ if $prs }}
 ==== Project infrastructure
 {{range $pr := $prs }}
@@ -112,7 +113,7 @@ const DefaultAdoc = `
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
+{{- with $prs := (withLabels .PullRequests "internal/test-infra") -}}
 {{ if $prs }}
 ==== Testing
 {{range $pr := $prs }}

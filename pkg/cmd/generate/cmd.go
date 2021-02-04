@@ -37,16 +37,6 @@ func NewCmd() *cobra.Command {
 				tpl = DefaultAdoc
 			}
 			t, err := template.New("changelog").Funcs(map[string]interface{}{
-				"withLabel": func(prs []github.PullRequest, label string) []github.PullRequest {
-					prsWithLabel := make([]github.PullRequest, 0)
-					for i := range prs {
-						pr := &prs[i]
-						if Contains(pr.Labels, label) {
-							prsWithLabel = append(prsWithLabel, *pr)
-						}
-					}
-					return prsWithLabel
-				},
 				"withLabels": func(prs []github.PullRequest, labels ...string) []github.PullRequest {
 					prsWithLabel := make([]github.PullRequest, 0)
 					for i := range prs {
