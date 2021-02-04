@@ -32,26 +32,47 @@ func NewCmd() *cobra.Command {
 			pullRequests := fetchPRsSinceLastRelease(repo)
 			dependencies, otherPRs := extractDepPRs(pullRequests)
 			dependencies = simplifyDepsPRs(dependencies)
-			tpl := Default
-			if cmd.Flag("format").Value.String() == "adoc" {
-				tpl = DefaultAdoc
-			}
+
 			t, err := template.New("changelog").Funcs(map[string]interface{}{
-				"withLabel": func(prs []github.PullRequest, label string) []github.PullRequest {
+				"withLabels": func(prs []github.PullRequest, labels ...string) []github.PullRequest {
 					prsWithLabel := make([]github.PullRequest, 0)
 					for i := range prs {
 						pr := &prs[i]
-						if Contains(pr.Labels, label) {
+						if Contains(pr.Labels, labels...) {
 							prsWithLabel = append(prsWithLabel, *pr)
 						}
 					}
 					return prsWithLabel
 				},
-			}).Parse(tpl)
+				"combine": func(prs []github.PullRequest, title string) ChangeGroup {
+					return ChangeGroup{
+						Title:        title,
+						PullRequests: prs,
+					}
+				},
+			}).Parse(formats["changelog."+format])
 			if err != nil {
 				return err
 			}
-			if err := t.Execute(os.Stdout, &Changelog{Release: tag, PullRequests: append(otherPRs, dependencies...)}); err != nil {
+
+			t, err = t.New("section").Parse(formats["section."+format])
+			if err != nil {
+				return err
+			}
+
+			if err := t.ExecuteTemplate(os.Stdout, "changelog", &Changelog{
+				Release:      tag,
+				PullRequests: append(otherPRs, dependencies...),
+				Areas: map[string]string{
+					"Command line":             "component/cli",
+					"Operator":                 "component/operator",
+					"Build System Integration": "component/ci",
+					"IDE integration":          "component/ide",
+					"Documentation":            "component/docs",
+					"Project infrastructure":   "internal/infra",
+					"Testing":                  "internal/test-infra",
+				},
+			}); err != nil {
 				return err
 			}
 
@@ -76,8 +97,8 @@ func NewCmd() *cobra.Command {
 	}
 
 	generateCmd.Flags().StringVarP(&tag, "tag", "t", "UNRELEASED", "tag used for current release")
-	generateCmd.Flags().StringVar(&format, "format", "md", "format of generated release notes")
-	generateCmd.Flags().StringVarP(&repo, "repository", "r", "", "repository URL")
+	generateCmd.Flags().StringVarP(&format, "format", "f", "md", "format of generated release notes [md or adoc]")
+	generateCmd.Flags().StringVarP(&repo, "repository", "r", "", "repository (org/repoName)")
 
 	_ = generateCmd.MarkFlagRequired("repository")
 	return generateCmd
@@ -101,6 +122,13 @@ func fetchPRsSinceLastRelease(repoName string) []github.PullRequest {
 	}
 
 	return filteredPRs
+}
+
+var formats = map[string]string{
+	"changelog.md":   Default,
+	"changelog.adoc": DefaultAdoc,
+	"section.md":     ChangeSection,
+	"section.adoc":   ChangeSectionAdoc,
 }
 
 const skipLabel = "skip-changelog"

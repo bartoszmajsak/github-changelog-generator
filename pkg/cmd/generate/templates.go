@@ -4,108 +4,88 @@ import "github.com/bartoszmajsak/github-changelog-generator/pkg/github"
 
 type Changelog struct {
 	Release      string
+	Areas        map[string]string
 	PullRequests []github.PullRequest
 }
 
-func Contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
+type ChangeGroup struct {
+	Title        string
+	PullRequests []github.PullRequest
 }
 
+// TODO withLabels moved here
+
+func Contains(s []string, es ...string) bool {
+	for _, e := range es {
+		eFound := false
+		for _, a := range s {
+			if a == e {
+				eFound = true
+			}
+		}
+		if !eFound {
+			return false
+		}
+	}
+	return true
+}
+
+const ChangeSection = `{{- if .PullRequests -}}
+#### {{ .Title }}
+{{range $pr := .PullRequests -}}
+ * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
+{{ end -}}
+{{- end -}}`
+
+const ChangeSectionAdoc = `{{- if .PullRequests -}}
+==== {{ .Title }}
+{{range $pr := .PullRequests -}}
+ * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
+{{ end -}}
+{{- end -}}`
+
 const Default = `
-{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
-{{ if $prs }}
-### New features
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
-{{- end -}}
-{{ end }}
-{{ end }}
+{{- range $areaName, $areaLabel := .Areas -}}
+{{- $bugs := (withLabels $.PullRequests "kind/bug" $areaLabel) -}}
+{{- $features := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
+{{- if or $bugs $features -}}
 
-{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
-{{ if $prs }}
-### Bug fixes
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
-{{- end -}}
-{{ end }}
-{{ end }}
+### {{ $areaName }}
 
-{{- with $prs := (withLabel .PullRequests "dependencies") -}}
-{{ if $prs }}
-### Latest dependencies update
+{{ template "section" (combine $features "New features") }}
+{{ template "section" (combine $bugs "Bugs") }}
+{{ end -}}
+{{- end -}}
+
+{{- with $prs := (withLabels .PullRequests "dependencies") -}}
+{{- if $prs -}}
+## Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}}))
 {{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
-{{ if $prs }}
-### Project infrastructure
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
-{{ if $prs }}
-### Testing
-{{range $pr := $prs }}
- * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
-{{- end -}}
-{{ end }}
-{{ end }}
+{{- end }}
 `
 
 const DefaultAdoc = `
-{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
-{{ if $prs }}
-==== New features
+{{- range $areaName, $areaLabel := .Areas -}}
+{{- $bugs := (withLabels $.PullRequests "kind/bug" $areaLabel) -}}
+{{- $features := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
+{{- if or $bugs $features -}}
+
+=== {{ $areaName }}
+
+{{ template "section" (combine $features "New features") }}
+{{ template "section" (combine $bugs "Bugs") }}
+{{ end -}}
+{{- end -}}
+
+{{- with $prs := (withLabels .PullRequests "dependencies") -}}
+{{- if $prs -}}
+== Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
-{{ if $prs }}
-==== Bug fixes
-{{range $pr := $prs }}
- * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "dependencies") -}}
-{{ if $prs }}
-==== Latest dependencies update
-{{range $pr := $prs }}
- * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}])
-{{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "internal/infra") -}}
-{{ if $prs }}
-==== Project infrastructure
-{{range $pr := $prs }}
- * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
-{{- end -}}
-{{ end }}
-{{ end }}
-
-{{- with $prs := (withLabel .PullRequests "internal/test-infra") -}}
-{{ if $prs }}
-==== Testing
-{{range $pr := $prs }}
- * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
-{{- end -}}
-{{ end }}
-{{ end }}
+{{- end }}
 `
