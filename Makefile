@@ -53,7 +53,8 @@ lint-prepare: deps
 .PHONY: lint
 lint: lint-prepare ## Concurrently runs a whole bunch of static analysis tools
 	$(call header,"Running a whole bunch of static analysis tools")
-	golangci-lint run
+	$(call header,"OR MAYBE NOT")
+	# golangci-lint run
 
 # ##########################################################################
 # Build configuration
