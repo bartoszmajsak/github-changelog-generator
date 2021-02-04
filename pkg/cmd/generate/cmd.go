@@ -47,11 +47,31 @@ func NewCmd() *cobra.Command {
 					}
 					return prsWithLabel
 				},
+				"withLabels": func(prs []github.PullRequest, labels ...string) []github.PullRequest {
+					prsWithLabel := make([]github.PullRequest, 0)
+					for i := range prs {
+						pr := &prs[i]
+						if Contains(pr.Labels, labels...) {
+							prsWithLabel = append(prsWithLabel, *pr)
+						}
+					}
+					return prsWithLabel
+				},
 			}).Parse(tpl)
 			if err != nil {
 				return err
 			}
-			if err := t.Execute(os.Stdout, &Changelog{Release: tag, PullRequests: append(otherPRs, dependencies...)}); err != nil {
+			if err := t.Execute(os.Stdout, &Changelog{
+				Release:      tag,
+				PullRequests: append(otherPRs, dependencies...),
+				Areas: map[string]string{
+					"Command line":    "component/cli",
+					"Operator":        "component/operator",
+					"CI intengration": "component/ci",
+					"IDE integration": "component/ide",
+					"Documentation":   "component/docs",
+				},
+			}); err != nil {
 				return err
 			}
 

@@ -4,36 +4,48 @@ import "github.com/bartoszmajsak/github-changelog-generator/pkg/github"
 
 type Changelog struct {
 	Release      string
+	Areas        map[string]string
 	PullRequests []github.PullRequest
 }
 
-func Contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+func Contains(s []string, es ...string) bool {
+	for _, e := range es {
+		eFound := false
+		for _, a := range s {
+			if a == e {
+				eFound = true
+			}
+		}
+		if !eFound {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 const Default = `
-{{- with $prs := (withLabel .PullRequests "kind/enhancement") -}}
+{{- with $changeLog := . -}}
+{{ range $areaName, $areaLabel := .Areas }}
+### {{$areaName}}
+{{- with $prs := (withLabels $changeLog.PullRequests "kind/enhancement" $areaLabel) -}}
 {{ if $prs }}
-### New features
+#### New features
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
 {{ end }}
 
-{{- with $prs := (withLabel .PullRequests "kind/bug") -}}
+{{- with $prs := (withLabels $changeLog.PullRequests "kind/bug" $areaLabel) -}}
 {{ if $prs }}
-### Bug fixes
+#### Bug fixes
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
 {{- end -}}
 {{ end }}
 {{ end }}
+{{ end }}
+{{- end -}}
 
 {{- with $prs := (withLabel .PullRequests "dependencies") -}}
 {{ if $prs }}
