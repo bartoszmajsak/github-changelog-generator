@@ -34,22 +34,8 @@ func NewCmd() *cobra.Command {
 			dependencies = simplifyDepsPRs(dependencies)
 
 			t, err := template.New("changelog").Funcs(map[string]interface{}{
-				"withLabels": func(prs []github.PullRequest, labels ...string) []github.PullRequest {
-					prsWithLabel := make([]github.PullRequest, 0)
-					for i := range prs {
-						pr := &prs[i]
-						if Contains(pr.Labels, labels...) {
-							prsWithLabel = append(prsWithLabel, *pr)
-						}
-					}
-					return prsWithLabel
-				},
-				"combine": func(prs []github.PullRequest, title string) ChangeGroup {
-					return ChangeGroup{
-						Title:        title,
-						PullRequests: prs,
-					}
-				},
+				"withLabels": PullRequestWithLabels,
+				"combine":    CombineToChangeGroup,
 			}).Parse(formats["changelog."+format])
 			if err != nil {
 				return err

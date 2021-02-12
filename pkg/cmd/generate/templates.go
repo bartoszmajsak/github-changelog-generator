@@ -13,7 +13,25 @@ type ChangeGroup struct {
 	PullRequests []github.PullRequest
 }
 
-// TODO withLabels moved here
+// PullRequestWithLabels filters slice of PRs to those matching one of the labels specified
+func PullRequestWithLabels(prs []github.PullRequest, labels ...string) []github.PullRequest {
+	prsWithLabel := make([]github.PullRequest, 0)
+	for i := range prs {
+		pr := &prs[i]
+		if Contains(pr.Labels, labels...) {
+			prsWithLabel = append(prsWithLabel, *pr)
+		}
+	}
+	return prsWithLabel
+}
+
+// CombineToChangeGroup merges group of PRs with corresponding title
+func CombineToChangeGroup(prs []github.PullRequest, title string) ChangeGroup {
+	return ChangeGroup{
+		Title:        title,
+		PullRequests: prs,
+	}
+}
 
 func Contains(s []string, es ...string) bool {
 	for _, e := range es {
