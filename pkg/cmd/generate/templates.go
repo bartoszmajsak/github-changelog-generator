@@ -49,16 +49,9 @@ func Contains(s []string, es ...string) bool {
 }
 
 const ChangeSection = `{{- if .PullRequests -}}
-#### {{ .Title }}
+##### {{ .Title }}
 {{range $pr := .PullRequests -}}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}})), by [@{{$pr.Author}}](https://github.com/{{$pr.Author}})
-{{ end -}}
-{{- end -}}`
-
-const ChangeSectionAdoc = `{{- if .PullRequests -}}
-==== {{ .Title }}
-{{range $pr := .PullRequests -}}
- * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{ end -}}
 {{- end -}}`
 
@@ -68,7 +61,7 @@ const Default = `
 {{- $features := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
 {{- if or $bugs $features -}}
 
-### {{ $areaName }}
+#### {{ $areaName }}
 
 {{ template "section" (combine $features "New features") }}
 {{ template "section" (combine $bugs "Bugs") }}
@@ -77,7 +70,7 @@ const Default = `
 
 {{- with $prs := (withLabels .PullRequests "dependencies") -}}
 {{- if $prs -}}
-## Latest dependencies update
+### Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ([#{{$pr.Number}}]({{$pr.Permalink}}))
 {{- end -}}
@@ -85,13 +78,20 @@ const Default = `
 {{- end }}
 `
 
+const ChangeSectionAdoc = `{{- if .PullRequests -}}
+===== {{ .Title }}
+{{range $pr := .PullRequests -}}
+ * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
+{{ end -}}
+{{- end -}}`
+
 const DefaultAdoc = `
 {{- range $areaName, $areaLabel := .Areas -}}
 {{- $bugs := (withLabels $.PullRequests "kind/bug" $areaLabel) -}}
 {{- $features := (withLabels $.PullRequests "kind/enhancement" $areaLabel) -}}
 {{- if or $bugs $features -}}
 
-=== {{ $areaName }}
+==== {{ $areaName }}
 
 {{ template "section" (combine $features "New features") }}
 {{ template "section" (combine $bugs "Bugs") }}
@@ -100,7 +100,7 @@ const DefaultAdoc = `
 
 {{- with $prs := (withLabels .PullRequests "dependencies") -}}
 {{- if $prs -}}
-== Latest dependencies update
+=== Latest dependencies update
 {{range $pr := $prs }}
  * {{$pr.Title}} ({{$pr.Permalink}}[#{{$pr.Number}}]), by https://github.com/{{$pr.Author}}[@{{$pr.Author}}]
 {{- end -}}
