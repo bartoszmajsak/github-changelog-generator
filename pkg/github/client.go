@@ -36,6 +36,7 @@ type AssociatedPRsQuery struct {
 						Nodes []struct {
 							Oid             string
 							MessageHeadline string
+							Message         string
 							AuthoredDate    githubv4.DateTime
 							Author          struct {
 								User struct {
@@ -107,6 +108,7 @@ func FindAssociatedPRs(client *githubv4.Client, repo []string, matchingCommit Ma
 						Author:          node.Author.User.Login,
 						MessageHeadline: node.MessageHeadline,
 						CreatedAt:       node.AuthoredDate,
+						Message:         node.Message,
 					},
 					Title:     pr.Title,
 					Number:    pr.Number,

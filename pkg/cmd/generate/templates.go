@@ -17,9 +17,9 @@ type ChangeGroup struct {
 func PullRequestWithLabels(prs []github.PullRequest, labels ...string) []github.PullRequest {
 	prsWithLabel := make([]github.PullRequest, 0)
 	for i := range prs {
-		pr := &prs[i]
+		pr := prs[i]
 		if Contains(pr.Labels, labels...) {
-			prsWithLabel = append(prsWithLabel, *pr)
+			prsWithLabel = append(prsWithLabel, pr)
 		}
 	}
 	return prsWithLabel

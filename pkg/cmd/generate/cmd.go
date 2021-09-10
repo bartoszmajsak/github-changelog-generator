@@ -129,6 +129,17 @@ func shouldSkipInChangelog(labels []string) bool {
 }
 
 var dependabotPrefix = regexp.MustCompile(`^build\(deps\): [B|b]ump `)
+var versionExp = regexp.MustCompile(`[0-9]+\.[0-9]`)
+
+// getLastVersionNumber locates the first version looking string in the list in reverse order
+func getLastVersionNumber(segments []string) string {
+	for i := len(segments) - 1; i != 0; i-- {
+		if versionExp.Match([]byte(segments[i])) {
+			return segments[i]
+		}
+	}
+	return ""
+}
 
 func simplifyDepsPRs(dependencies []github.PullRequest) []github.PullRequest {
 	sort.SliceStable(dependencies, func(i, j int) bool {
@@ -137,12 +148,13 @@ func simplifyDepsPRs(dependencies []github.PullRequest) []github.PullRequest {
 
 	latestDeps := make(map[string][]github.PullRequest)
 	for i := 0; i < len(dependencies); i++ {
-		strippedPrefix := dependabotPrefix.ReplaceAllString(dependencies[i].Title, "")
+		dependency := dependencies[i]
+		strippedPrefix := dependabotPrefix.ReplaceAllString(dependency.Title, "")
 		prTitle := strings.Split(strippedPrefix, " ")
 		dep := prTitle[0]
-		version := prTitle[4]
-		dependencies[i].Title = dep + " to " + version
-		latestDeps[dep] = append(latestDeps[dep], dependencies[i])
+		version := getLastVersionNumber(prTitle)
+		dependency.Title = dep + " to " + version
+		latestDeps[dep] = append(latestDeps[dep], dependency)
 	}
 
 	latestPrs := make([]github.PullRequest, 0)
@@ -165,11 +177,24 @@ func extractDepPRs(prs []github.PullRequest) (depPRs, otherPRs []github.PullRequ
 	depPRs = make([]github.PullRequest, 0)
 	otherPRs = make([]github.PullRequest, 0)
 	for i := range prs {
-		pr := &prs[i]
-		if Contains(pr.Labels, "dependencies") {
-			depPRs = append(depPRs, prs[i])
-		} else {
-			otherPRs = append(otherPRs, prs[i])
+		pr := prs[i]
+		messageLines := strings.Split(strings.ReplaceAll(pr.RelatedCommit.Message, "\r\n", "\n"), "\n")
+		for i := range messageLines {
+			messageLine := messageLines[i]
+			if dependabotPrefix.Match([]byte(messageLine)) {
+				depPRs = append(depPRs, github.PullRequest{
+					Title:         messageLine,
+					RelatedCommit: pr.RelatedCommit,
+					Number:        pr.Number,
+					Permalink:     pr.Permalink,
+					Author:        pr.Author,
+					Labels:        append(pr.Labels, "dependencies"),
+				})
+			}
+		}
+
+		if !Contains(pr.Labels, "dependencies") {
+			otherPRs = append(otherPRs, pr)
 		}
 	}
 	return
