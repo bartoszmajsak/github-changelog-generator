@@ -15,6 +15,7 @@ type PullRequest struct {
 type Commit struct {
 	Hash            string
 	MessageHeadline string
+	Message         string
 	Author          string
 	CreatedAt       githubv4.DateTime
 }
